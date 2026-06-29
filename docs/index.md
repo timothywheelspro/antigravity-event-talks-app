@@ -24,13 +24,13 @@ features:
   - title: Google AI Studio
     details: The fastest path from prompt to production. Use Gemini to vibe-code your applications and instantly deploy them to Cloud Run.
     icon: ✨
-  - title: Codelab: Get Started with Google Antigravity
+  - title: "Codelab: Get Started with Google Antigravity"
     details: The complete beginner's guide. Explore the agent-first command center, IDE integrations, and the basics of vibe coding.
     icon: ✨
-  - title: Codelab: Get Started with Antigravity Skills
+  - title: "Codelab: Get Started with Antigravity Skills"
     details: Familiarize yourself with Antigravity customizations by building your own AI Agent skills and workflows.
     icon: 💻
-  - title: Codelab: Build & Deploy in AI Studio
+  - title: "Codelab: Build & Deploy in AI Studio"
     details: Learn how to vibe-code a Web Application in AI Studio and instantly Deploy it to Google Cloud Run.
     icon: 🌐
   - title: Vercel Deployments

@@ -39,4 +39,7 @@ features:
   - title: Agent Development Kit (ADK)
     details: Build your own custom AI companions using the ADK agentic patterns with memory and custom skills.
     icon: 🧠
+  - title: BigQuery Release Notes App
+    details: Explore the latest Google Cloud BigQuery release notes in a clean, searchable interface.
+    icon: 📊
 ---

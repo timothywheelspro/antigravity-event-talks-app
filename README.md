@@ -1,6 +1,8 @@
 # Antigravity Resource Hub & Sovereign Infrastructure Codelab
 
 > Everything you need to compress the software development life cycle, build in the agent-first era, and architect your attention. Curated for the **Control Your World** community.
+> 
+> 🌐 **Live Global Portal:** [https://timothywheelspro.github.io/antigravity-event-talks-app/](https://timothywheelspro.github.io/antigravity-event-talks-app/)
 
 ---
 

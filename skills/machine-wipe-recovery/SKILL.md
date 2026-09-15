@@ -51,7 +51,30 @@ When SSH keys are not yet registered, clone public repositories immediately via 
 ```bash
 mkdir -p ~/Documents/GitHub && cd ~/Documents/GitHub
 git clone https://github.com/timothywheelspro/antigravity-event-talks-app.git
+git clone https://github.com/timothywheelspro/AssetDesk.git
 cd antigravity-event-talks-app
+```
+
+---
+
+## 3a. .NET 8 SDK (User-Scoped, No sudo, No Homebrew)
+
+AssetDesk (SIS250) targets `net8.0`. Install with Microsoft's script into `~/.dotnet`
+so no admin password is needed and the runbook stays reproducible:
+
+```bash
+curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 8.0 --install-dir ~/.dotnet
+
+# Persist for every shell
+cat >> ~/.zshrc <<'ZSH'
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH="$HOME/.dotnet:$HOME/.dotnet/tools:$PATH"
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+ZSH
+source ~/.zshrc
+
+# Canary: baseline must print row counts for all three CSVs
+cd ~/Documents/GitHub/AssetDesk && dotnet run
 ```
 
 ---

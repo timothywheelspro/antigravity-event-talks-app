@@ -31,6 +31,7 @@ The codelab lessons and hands-on exercises are located in the [`docs/`](./docs) 
 ### [Module 3: Collapsing the Stack (Integration)](./docs/module-3-integration.md)
 * **Concepts:** The Isomorphism (port 22 firewalling mapped to psychological boundaries) and Agentic Delegation via local Model-Routers (e.g. Ollama for workhorse tasks).
 * **Hands-on Lab (Edge Drop Webhook):** Build and deploy `edge-drop.py`—a local Python webhook that inspects incoming requests, evaluates payload value, and returns `403 Forbidden` to actively drop low-value demands at the edge.
+* **Hands-on Lab (Real Inputs — Git Push Gate):** Every `git push` on this repo is sent to the Edge Drop as a `git-push` event via `sentinel/hooks/pre-push`. WIP/fixup commits or pushes touching `.env`/cache paths get `403` and the push is refused. `sentinel/publish.sh` runs the full loop: gate → push → wait for Pages build → Canary against the live URL. Arm with `git config core.hooksPath sentinel/hooks`.
 
 ---
 

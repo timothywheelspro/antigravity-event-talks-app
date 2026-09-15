@@ -83,17 +83,22 @@ EOF
 Re-establish local machine autonomy and verification services:
 
 ```bash
-# Initialize Sentinel core
+# Runtime/log dir (NOT versioned). The scripts themselves live in the repo under sentinel/.
 mkdir -p ~/sentinel-core && cd ~/sentinel-core
+REPO=~/Documents/GitHub/antigravity-event-talks-app
 
 # Boot Origin Server (Port 8080)
 nohup python3 -m http.server 8080 > origin.log 2>&1 &
 
-# Boot Edge Drop Webhook (Port 8081)
-nohup python3 edge-drop.py > edge-drop.log 2>&1 &
+# Boot Edge Drop Webhook (Port 8081) from the versioned copy
+nohup python3 "$REPO/sentinel/edge-drop.py" > edge-drop.log 2>&1 &
 
-# Verify active listeners
+# Verify active listeners + health
 lsof -i :8080 -i :8081
+curl -s http://localhost:8081/health
+
+# Arm the git pre-push gate (once per clone)
+git -C "$REPO" config core.hooksPath sentinel/hooks
 ```
 
 ---

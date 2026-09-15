@@ -7,12 +7,28 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# VitePress build and cache
+.vitepress/cache
+.vitepress/dist
+docs/.vitepress/cache
+docs/.vitepress/dist
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+
+# Editor directories and OS files
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,4 +38,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Deployment
 .vercel

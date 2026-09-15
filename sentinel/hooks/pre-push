@@ -1,0 +1,58 @@
+#!/bin/bash
+# pre-push - Sovereign Sentinel gate. Sends every push to the Edge Drop webhook;
+# a 403 refuses the push. Fails CLOSED if the Sentinel is down.
+# Escape hatch: SENTINEL_BYPASS=1 git push
+#
+# Install once per clone:  git config core.hooksPath sentinel/hooks
+
+SENTINEL_URL="${SENTINEL_URL:-http://localhost:8081}"
+REPO="$(basename "$(git rev-parse --show-toplevel)")"
+ZERO="0000000000000000000000000000000000000000"
+
+if [ "${SENTINEL_BYPASS:-0}" = "1" ]; then
+    echo "[sentinel] BYPASSED by operator." >&2
+    exit 0
+fi
+
+# stdin: <local ref> <local sha> <remote ref> <remote sha> (one line per ref)
+while read -r local_ref local_sha remote_ref remote_sha; do
+    [ "$local_sha" = "$ZERO" ] && continue   # branch deletion: nothing to inspect
+    if [ "$remote_sha" = "$ZERO" ]; then
+        range="$local_sha --not --remotes"    # new branch: everything not already on origin
+    else
+        range="$remote_sha..$local_sha"
+    fi
+    branch="${remote_ref#refs/heads/}"
+
+    payload=$(
+        git log --format='%H%x1f%s' $range |
+        python3 -c '
+import json, subprocess, sys
+commits = [dict(zip(("sha", "message"), l.rstrip("\n").split("\x1f", 1))) for l in sys.stdin if l.strip()]
+files = set()
+for c in commits:
+    out = subprocess.run(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", c["sha"]],
+                         capture_output=True, text=True).stdout
+    files.update(out.split())
+print(json.dumps({"event": "git-push", "repo": sys.argv[1], "branch": sys.argv[2],
+                  "commits": commits, "files": sorted(files)}))
+' "$REPO" "$branch"
+    )
+
+    response=$(curl -s -m 5 -w '\n%{http_code}' -X POST -H 'Content-Type: application/json' \
+               --data "$payload" "$SENTINEL_URL/") || {
+        echo "[sentinel] Edge Drop unreachable at $SENTINEL_URL — push refused (fail closed)." >&2
+        echo "[sentinel] Boot it:  nohup python3 sentinel/edge-drop.py > ~/sentinel-core/edge-drop.log 2>&1 &" >&2
+        exit 1
+    }
+    code="${response##*$'\n'}"
+    body="${response%$'\n'*}"
+
+    if [ "$code" = "200" ]; then
+        echo "[sentinel] ACCEPTED $branch: $(echo "$body" | python3 -c 'import json,sys;print(json.load(sys.stdin)["reason"])')" >&2
+    else
+        echo "[sentinel] DROPPED $branch (HTTP $code): $(echo "$body" | python3 -c 'import json,sys;print(json.load(sys.stdin).get("reason","?"))')" >&2
+        exit 1
+    fi
+done
+exit 0
